@@ -1,6 +1,13 @@
+.env
 node_modules
+yarn.lock
+typechain
+typechain-types
+
+# Hardhat files
+abi
 coverage
 artifacts
 cache
 coverage.json
-yarn.lock
+gas-report.txt
