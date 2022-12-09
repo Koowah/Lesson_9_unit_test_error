@@ -1,5 +1,6 @@
 const { network, ethers } = require("hardhat")
 const { developmentChains, networkConfig } = require("./../hardhat-helper-config")
+const { verify } = require("../utils/verify")
 
 const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther("30")
 
@@ -33,7 +34,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         callbackGasLimit,
         interval,
     ]
-    await deploy("Lottery", {
+    const lottery = await deploy("Lottery", {
         // contract: "Lottery",
         from: deployer,
         log: true,
@@ -42,6 +43,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     })
     log("Lottery deployed!")
     log("-".repeat(50))
+
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+        await verify(lottery.address, args)
+        log("-".repeat(50))
+    }
 }
 
 module.exports.tags = ["all", "lottery"]
