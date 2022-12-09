@@ -120,7 +120,7 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         players = new address payable[](0);
         last_timestamp = block.timestamp;
         lotteryState = LotteryState.OPEN;
-        (bool callSuccess, ) = recentWinner.call{value: address(this).balance}("");
+        (bool callSuccess, ) = msg.sender.call{value: address(this).balance}("");
         if (!callSuccess) revert Lottery__TransferFailed();
 
         emit WinnerPicked(recentWinner_);
