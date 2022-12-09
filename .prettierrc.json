@@ -1,10 +1,22 @@
 {
-  "overrides": [
-    {
-      "files": "*.sol",
-      "options": {
-        "printWidth": 120
-      }
-    }
-  ]
+    "printWidth": 100,
+    "semi": false,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "overrides": [
+        {
+            "files": "*.sol",
+            "options": {
+                "printWidth": 120,
+                "semi": true
+            }
+        },
+        {
+            "files": "*.jsx",
+            "options": {
+                "printWidth": 120,
+                "tabWidth": 2
+            }
+        }
+    ]
 }
