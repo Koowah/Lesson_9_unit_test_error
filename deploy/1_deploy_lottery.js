@@ -9,16 +9,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
     const currentNetwork = networkConfig[chainId]
-    let vrfCoordinatorV2Address, subscriptionId
+    let vrfCoordinatorV2Mock, vrfCoordinatorV2Address, subscriptionId
 
     if (developmentChains.includes(network.name)) {
-        const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+        vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
         vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address
         // We get the subscription Id - cf documentation
         const transactionResponse = await vrfCoordinatorV2Mock.createSubscription()
         const transactionReceipt = await transactionResponse.wait()
         subscriptionId = transactionReceipt.events[0].args.subId
-        // Fund the subscription - normally need link token
+        // Fund the subscription and add consumer - normally need link token
         await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, VRF_SUB_FUND_AMOUNT)
     } else {
         vrfCoordinatorV2Address = currentNetwork["vrfCoordinatorV2"]
@@ -43,6 +43,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     })
     log("Lottery deployed!")
     log("-".repeat(50))
+
+    if (developmentChains.includes(network.name)) {
+        await vrfCoordinatorV2Mock.addConsumer(subscriptionId, lottery.address)
+        log("Consummer added")
+    }
 
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         await verify(lottery.address, args)

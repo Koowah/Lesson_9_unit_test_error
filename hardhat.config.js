@@ -43,4 +43,10 @@ module.exports = {
             default: 1,
         },
     },
+    gasReporter: {
+        enabled: false,
+        // noColors: true,
+        // currency: "USD",
+        // coinmarketcap: COINMARKETCAP_API_KEY,
+    },
 }
