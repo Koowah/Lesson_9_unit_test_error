@@ -10,6 +10,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: deployer,
         log: true,
         args: [entranceFee],
+        waitConfirmations: network.config.blockConfirmations || 1,
     })
     log("Lottery deployed!")
     log("-".repeat(50))
