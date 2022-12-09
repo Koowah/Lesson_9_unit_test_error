@@ -15,7 +15,7 @@ const { assert, expect } = require("chai")
               deployer = (await getNamedAccounts()).deployer
               await deployments.fixture(["all"])
               lottery = await ethers.getContract("Lottery", deployer)
-              vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+              vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock", deployer)
           })
           describe("Constructor", () => {
               it("properly sets all parameters", async () => {
@@ -141,8 +141,8 @@ const { assert, expect } = require("chai")
                           console.log("Found the event !")
                           try {
                               const recentWinner = await lottery.getRecentWinner()
-                              log(
-                                  recentWinner.address,
+                              console.log(
+                                  recentWinner,
                                   accounts[0].address,
                                   accounts[1].address,
                                   accounts[2].address,
