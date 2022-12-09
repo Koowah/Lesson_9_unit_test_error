@@ -59,7 +59,12 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         interval = interval_;
     }
 
-    // Enter the lottery
+    /**
+     * @notice Function to enter the lottery
+     * requires minimum entrance fee and open
+     * lottery
+     * @dev tnakt
+     */
     function enterLottery() public payable {
         if (msg.value < entranceFee) revert Lottery__NotEnoughETH();
         if (lotteryState != LotteryState.OPEN) revert Lottery__NotOpen();
@@ -68,6 +73,12 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         emit LotteryEntered(msg.sender);
     }
 
+    /**
+     * @notice check if upkeep should be performed
+     * requires open lottery, enough time passed,
+     * players and funds
+     * @dev uses chainlink keepers
+     */
     function checkUpkeep(
         bytes memory /* checkData */
     ) public view override returns (bool upkeepNeeded, bytes memory /* performData */) {
@@ -78,7 +89,10 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         upkeepNeeded = (isOpen && timePassed && hasBalance && hasPlayers);
     }
 
-    // Pick a random winner
+    /**
+     * @notice gets a provably random number
+     * @dev uses chainlink VRF
+     */
     function performUpkeep(bytes calldata /* performData */) external override {
         (bool upkeepNeeded, ) = checkUpkeep("");
         if (!upkeepNeeded)
@@ -94,6 +108,11 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         emit RequestedLotteryWinner(requestId);
     }
 
+    /**
+     * @notice gets a provably random winner
+     * and resets lottery
+     * @dev uses chainlink VRF & keepers
+     */
     function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override {
         uint256 indexOfWinner = randomWords[0] % players.length;
         address payable recentWinner_ = players[indexOfWinner];
@@ -121,6 +140,18 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
     function getLotteryState() public view returns (LotteryState) {
         return lotteryState;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return players.length;
+    }
+
+    function getTimestamp() public view returns (uint256) {
+        return last_timestamp;
+    }
+
+    function getRequestconfirmations() public pure returns (uint256) {
+        return REQUEST_CONFIRMATIONS;
     }
 
     function getNumWords() public pure returns (uint256) {
