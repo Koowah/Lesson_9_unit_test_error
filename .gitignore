@@ -8,5 +8,6 @@ abi
 coverage
 artifacts
 cache
+deployments
 coverage.json
 gas-report.txt
